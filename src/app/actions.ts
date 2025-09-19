@@ -4,7 +4,7 @@ import Amadeus from 'amadeus';
 import { dataMappingWithLLM } from '@/ai/flows/data-mapping-with-llm';
 import { AMADEUS_APIS } from '@/lib/amadeus-apis';
 
-const getAmadeusClient = (apiKey: string, apiSecret: string) => {
+const getAmadeusClient = (apiKey?: string, apiSecret?: string) => {
   if (!apiKey || !apiSecret) {
     return null;
   }
@@ -17,8 +17,6 @@ const getAmadeusClient = (apiKey: string, apiSecret: string) => {
 export async function executeApiAndMapData(
   apiId: string,
   params: Record<string, any>,
-  apiKey: string,
-  apiSecret: string,
   useMock: boolean
 ): Promise<{ raw: object; mapped: string } | { error: string }> {
   try {
@@ -29,13 +27,16 @@ export async function executeApiAndMapData(
     }
     
     let rawApiResponse: object;
+    
+    const apiKey = process.env.AMADEUS_API_KEY;
+    const apiSecret = process.env.AMADEUS_API_SECRET;
 
-    if (useMock || !apiKey || !apiSecret) {
+    if (useMock || !apiKey || !apiSecret || apiKey === 'YOUR_API_KEY' || apiSecret === 'YOUR_API_SECRET') {
       rawApiResponse = api.mockResponse;
     } else {
       const amadeus = getAmadeusClient(apiKey, apiSecret);
       if (!amadeus) {
-        throw new Error('Amadeus client could not be initialized. Check your API key and secret.');
+        throw new Error('Amadeus client could not be initialized. Check your API key and secret in the .env file.');
       }
       
       // This is a simplified dispatcher. A real implementation would need more robust mapping.

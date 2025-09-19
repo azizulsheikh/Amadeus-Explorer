@@ -20,13 +20,11 @@ import { executeApiAndMapData } from '@/app/actions';
 import ResponseDisplay from './response-display';
 import UiPreview from './ui-preview';
 import Logo from './logo';
-import { Card, CardContent, CardHeader } from './ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Eye, FileJson, KeyRound, LayoutGrid, Server, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Switch } from './ui/switch';
-import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 type ApiResult = {
@@ -38,8 +36,6 @@ export default function ApiExplorer() {
   const [selectedApi, setSelectedApi] = useState<AmadeusApi | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [apiResult, setApiResult] = useState<ApiResult | null>(null);
-  const [apiKey, setApiKey] = useState('');
-  const [apiSecret, setApiSecret] = useState('');
   const [useMockData, setUseMockData] = useState(true);
   const { toast } = useToast();
 
@@ -51,18 +47,18 @@ export default function ApiExplorer() {
   const handleRequestSubmit = async (params: Record<string, any>) => {
     if (!selectedApi) return;
 
-    if (!useMockData && (!apiKey || !apiSecret)) {
+    if (!useMockData && (process.env.NEXT_PUBLIC_AMADEUS_API_KEY === 'YOUR_API_KEY' || !process.env.NEXT_PUBLIC_AMADEUS_API_KEY)) {
       toast({
         variant: 'destructive',
-        title: 'API Credentials Required',
-        description: 'Please enter your Amadeus API Key and Secret to use live data.',
+        title: 'API Credentials Not Set',
+        description: 'Please set your Amadeus API Key and Secret in the .env file to use live data.',
       });
       return;
     }
 
     setIsLoading(true);
     setApiResult(null);
-    const result = await executeApiAndMapData(selectedApi.id, params, apiKey, apiSecret, useMockData);
+    const result = await executeApiAndMapData(selectedApi.id, params, useMockData);
     setIsLoading(false);
 
     if ('error' in result) {
@@ -119,8 +115,8 @@ export default function ApiExplorer() {
                     <div className="flex items-center gap-3">
                         <KeyRound className="size-6 text-primary" />
                         <div>
-                            <h3 className="text-lg font-headline font-semibold">API Credentials</h3>
-                            <p className="text-sm text-muted-foreground">Enter your Amadeus API keys to use live data.</p>
+                            <h3 className="text-lg font-headline font-semibold">Data Source</h3>
+                            <p className="text-sm text-muted-foreground">Switch between mock and live API data.</p>
                         </div>
                     </div>
                      <div className="flex items-center space-x-2">
@@ -144,30 +140,13 @@ export default function ApiExplorer() {
                     </div>
                 </div>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-               <div>
-                  <Label htmlFor="api-key">API Key</Label>
-                  <Input 
-                    id="api-key" 
-                    type="password"
-                    placeholder="Enter your API Key" 
-                    value={apiKey} 
-                    onChange={(e) => setApiKey(e.target.value)}
-                    disabled={useMockData}
-                  />
+            {!useMockData && (
+              <CardContent>
+                <div className="p-4 rounded-md bg-accent/10 border border-accent/20 text-accent-foreground/80 text-sm">
+                  Live data is enabled. Ensure your <code className="font-mono bg-accent/20 px-1 py-0.5 rounded-sm">.env</code> file is configured with your Amadeus API credentials.
                 </div>
-                <div>
-                  <Label htmlFor="api-secret">API Secret</Label>
-                  <Input 
-                    id="api-secret" 
-                    type="password"
-                    placeholder="Enter your API Secret" 
-                    value={apiSecret} 
-                    onChange={(e) => setApiSecret(e.target.value)}
-                    disabled={useMockData}
-                  />
-                </div>
-            </CardContent>
+              </CardContent>
+            )}
           </Card>
 
           {selectedApi ? (
