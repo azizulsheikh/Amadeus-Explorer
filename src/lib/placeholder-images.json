@@ -1,3 +1,40 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hotel-1",
+      "description": "A modern hotel exterior at dusk.",
+      "imageUrl": "https://picsum.photos/seed/hotel1/600/400",
+      "imageHint": "modern hotel"
+    },
+    {
+      "id": "hotel-2",
+      "description": "A luxury hotel lobby with a grand staircase.",
+      "imageUrl": "https://picsum.photos/seed/hotel2/600/400",
+      "imageHint": "luxury lobby"
+    },
+    {
+      "id": "hotel-3",
+      "description": "A boutique hotel room with a minimalist design.",
+      "imageUrl": "https://picsum.photos/seed/hotel3/600/400",
+      "imageHint": "hotel room"
+    },
+    {
+      "id": "poi-1",
+      "description": "An iconic landmark tower against a blue sky.",
+      "imageUrl": "https://picsum.photos/seed/poi1/600/400",
+      "imageHint": "landmark tower"
+    },
+    {
+      "id": "poi-2",
+      "description": "A bustling city square with historical buildings.",
+      "imageUrl": "https://picsum.photos/seed/poi2/600/400",
+      "imageHint": "city square"
+    },
+    {
+      "id": "poi-3",
+      "description": "A serene park with a tranquil lake.",
+      "imageUrl": "https://picsum.photos/seed/poi3/600/400",
+      "imageHint": "serene park"
+    }
+  ]
 }

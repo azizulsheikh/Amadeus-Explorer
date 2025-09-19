@@ -1,0 +1,64 @@
+import { ArrowRight, Clock, Plane } from 'lucide-react';
+import { Card, CardContent } from './ui/card';
+
+export type MappedFlight = {
+  id: string;
+  airline: string;
+  departure: { iataCode: string; time: string };
+  arrival: { iataCode: string; time: string };
+  duration: string;
+  price: number;
+  currency: string;
+};
+
+interface FlightCardProps {
+  flight: MappedFlight;
+}
+
+export default function FlightCard({ flight }: FlightCardProps) {
+  const formatTime = (dateTime: string) => new Date(dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const formatDuration = (duration: string) => {
+    return duration.replace('PT', '').replace('H', 'h ').replace('M', 'm');
+  };
+
+  return (
+    <Card>
+      <CardContent className="p-4 grid grid-cols-1 md:grid-cols-4 items-center gap-4">
+        <div className="flex items-center gap-3 col-span-1">
+          <div className="p-2 bg-muted rounded-full">
+            <Plane className="text-primary size-6" />
+          </div>
+          <div>
+            <p className="font-semibold">{flight.airline}</p>
+            <p className="text-xs text-muted-foreground">Flight Offer</p>
+          </div>
+        </div>
+
+        <div className="col-span-1 md:col-span-2 flex items-center justify-center gap-4 text-sm">
+          <div className="text-center">
+            <p className="font-bold text-lg">{flight.departure.iataCode}</p>
+            <p className="text-muted-foreground">{formatTime(flight.departure.time)}</p>
+          </div>
+          <div className="flex flex-col items-center text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <Clock className="size-3" />
+              <span className="text-xs">{formatDuration(flight.duration)}</span>
+            </div>
+            <ArrowRight className="size-8" />
+          </div>
+          <div className="text-center">
+            <p className="font-bold text-lg">{flight.arrival.iataCode}</p>
+            <p className="text-muted-foreground">{formatTime(flight.arrival.time)}</p>
+          </div>
+        </div>
+        
+        <div className="col-span-1 text-center md:text-right">
+          <p className="text-2xl font-bold font-headline text-primary">
+            {new Intl.NumberFormat('en-US', { style: 'currency', currency: flight.currency }).format(flight.price)}
+          </p>
+          <p className="text-xs text-muted-foreground">Total price</p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
