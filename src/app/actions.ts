@@ -6,14 +6,14 @@ import { dataMappingWithLLM } from '@/ai/flows/data-mapping-with-llm';
 import { AMADEUS_APIS } from '@/lib/amadeus-apis';
 
 const getAmadeusClient = (apiKey?: string, apiSecret?: string) => {
-  if (!apiKey || !apiSecret || apiKey === 'YOUR_API_KEY' || apiSecret === 'YOUR_API_SECRET') {
-    return null;
-  }
-  return new Amadeus({
-    clientId: apiKey,
-    clientSecret: apiSecret,
-  });
-};
+    if (!apiKey || !apiSecret || apiKey === 'YOUR_API_KEY' || apiSecret === 'YOUR_API_SECRET') {
+      return null;
+    }
+    return new Amadeus({
+      clientId: apiKey,
+      clientSecret: apiSecret,
+    });
+  };
 
 export async function executeApiAndMapData(
   apiId: string,
