@@ -135,18 +135,22 @@ export const AMADEUS_APIS: AmadeusApi[] = [
       { name: 'destinationLocationCode', label: 'Destination IATA Code', type: 'text', required: true, placeholder: 'e.g., JFK', defaultValue: 'JFK' },
       { name: 'departureDate', label: 'Departure Date', type: 'date', required: true, defaultValue: new Date().toISOString().split('T')[0] },
     ],
-    mockResponse: { data: [{ id: '1', departure: '10:00', arrival: '13:00', carrier: 'BA' }] },
+    mockResponse: { data: [{ id: '1', departure: '10:00', arrival: '13:00', carrier: 'BA', duration: 'PT3H' }] },
     uiRequirements: `
       Map the flight availability data to a list of flights. The API returns a simple list with times, not full date-times.
       The 'departureDate' from the original user request is available in the context.
       Each flight should contain:
       - id: The availability ID.
       - airline: The carrier code.
-      - departure: An object with iataCode (from originLocationCode) and time. The time should be a full date-time string constructed by combining the departureDate from the request with the time from the API response (e.g., '2024-10-28T10:00:00').
-      - arrival: An object with iataCode (from destinationLocationCode) and time. The time should be a full date-time string constructed by combining the departureDate with the time from the API response.
+      - departure: An object with iataCode (from originLocationCode) and time. The time should be the time from the API response (e.g., '10:00').
+      - arrival: An object with iataCode (from destinationLocationCode) and time. The time should be the time from the API response.
       - duration: The duration string.
       - price: 0 (as price is not available).
       - currency: "USD" (as currency is not available).
+      - stops: 0
+      - cabin: "ECONOMY"
+      - baggage: 0
+      - aircraft: "N/A"
       Return the data as a JSON object with a "flights" key containing an array of these flight objects.
     `,
   },
@@ -330,14 +334,18 @@ export const AMADEUS_APIS: AmadeusApi[] = [
       })),
     },
     uiRequirements: `
-      Map the flight offer data to a list of flights. Each flight should contain:
+      Map the flight offer data to a list of flights. For each flight offer in the 'data' array, extract the following information:
       - id: The flight offer ID.
-      - airline: The validating airline code.
-      - departure: An object with iataCode and time.
-      - arrival: An object with iataCode and time.
-      - duration: The total itinerary duration.
-      - price: The grand total price as a number.
-      - currency: The currency code.
+      - airline: The first validating airline code from 'validatingAirlineCodes'.
+      - departure: An object with iataCode and time from the first segment of the first itinerary.
+      - arrival: An object with iataCode and time from the last segment of the first itinerary.
+      - duration: The total duration of the first itinerary.
+      - price: The grandTotal from the 'price' object, as a number.
+      - currency: The currency code from the 'price' object.
+      - stops: The number of stops from the first segment of the first itinerary.
+      - cabin: The cabin class from the first fare detail of the first traveler pricing.
+      - baggage: The quantity of included checked bags from the first fare detail.
+      - aircraft: The aircraft code from the first segment.
       Return the data as a JSON object with a "flights" key containing an array of these flight objects.
     `,
   },
