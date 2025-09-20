@@ -20,7 +20,7 @@ import { executeApiAndMapData } from '@/app/actions';
 import ResponseDisplay from './response-display';
 import UiPreview from './ui-preview';
 import Logo from './logo';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
+import { Card, CardContent, CardHeader, CardDescription } from './ui/card';
 import { Eye, FileJson, KeyRound, LayoutGrid, Server, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Label } from './ui/label';
@@ -133,7 +133,7 @@ export default function ApiExplorer() {
             </CardHeader>
             {useMockData && (
               <CardContent>
-                <div className="p-4 rounded-md bg-accent/10 border border-accent/20 text-accent-foreground/80 text-sm">
+                <div className="p-4 rounded-md bg-accent border border-accent-foreground/20 text-accent-foreground font-semibold text-sm">
                   Mock data is enabled. The app will not make real API calls.
                 </div>
               </CardContent>
