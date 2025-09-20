@@ -42,6 +42,7 @@ export default function UiPreview({ data, apiId, isLoading }: UiPreviewProps) {
 
       switch (apiId) {
         case 'flight-offers-search':
+        case 'flight-availabilities-search':
           if (!parsedData.flights || parsedData.flights.length === 0) {
             return <p>No flights found for this search.</p>;
           }
@@ -51,7 +52,7 @@ export default function UiPreview({ data, apiId, isLoading }: UiPreviewProps) {
             </div>
           );
         case 'hotel-search':
-           if (!parsedData.hotels || parsedData.hotels.length === 0) {
+           if (!parsedData.hotels || parsedData.hotels.length === a) {
             return <p>No hotels found for this search.</p>;
           }
           return (

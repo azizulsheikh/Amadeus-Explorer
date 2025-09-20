@@ -135,7 +135,17 @@ export const AMADEUS_APIS: AmadeusApi[] = [
       { name: 'departureDate', label: 'Departure Date', type: 'date', required: true, defaultValue: new Date().toISOString().split('T')[0] },
     ],
     mockResponse: { data: [{ id: '1', departure: '10:00', arrival: '13:00', carrier: 'BA' }] },
-    uiRequirements: 'Display a list of available flights with departure/arrival times and carrier.',
+    uiRequirements: `
+      Map the flight availability data to a list of flights. Each flight should contain:
+      - id: The availability ID.
+      - airline: The carrier code.
+      - departure: An object with iataCode (from input) and time (from 'at' property).
+      - arrival: An object with iataCode (from input) and time (from 'at' property).
+      - duration: The duration string.
+      - price: 0 (as price is not available).
+      - currency: "USD" (as currency is not available).
+      Return the data as a JSON object with a "flights" key containing an array of these flight objects.
+    `,
   },
   {
     id: 'flight-busiest-traveling-period',
