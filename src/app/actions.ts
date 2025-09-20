@@ -29,15 +29,20 @@ export async function executeApiAndMapData(
     
     let rawApiResponse: object;
     
-    const apiKey = process.env.AMADEUS_API_KEY;
-    const apiSecret = process.env.AMADEUS_API_SECRET;
-    const amadeus = getAmadeusClient(apiKey, apiSecret);
-
     if (useMock) {
       rawApiResponse = api.mockResponse;
     } else {
-      if (!amadeus) {
+      const apiKey = process.env.AMADEUS_API_KEY;
+      const apiSecret = process.env.AMADEUS_API_SECRET;
+      
+      if (!apiKey || !apiSecret) {
         return { error: 'Amadeus API credentials are not configured. Please add AMADEUS_API_KEY and AMADEUS_API_SECRET to your .env file.' };
+      }
+
+      const amadeus = getAmadeusClient(apiKey, apiSecret);
+      if (!amadeus) {
+        // This case should ideally not be hit if the above check is done, but as a safeguard.
+        return { error: 'Amadeus API client could not be initialized. Check your credentials.' };
       }
       
       let apiPromise;
@@ -201,6 +206,7 @@ export async function executeApiAndMapData(
         const response = await apiPromise;
         rawApiResponse = response.data;
       } else if (!rawApiResponse) {
+        // Fallback to mock response if no promise was created and no mock data was assigned.
         rawApiResponse = api.mockResponse;
       }
     }
@@ -217,7 +223,7 @@ export async function executeApiAndMapData(
   } catch (error: any) {
     console.error('Error executing API and mapping data:', error);
     // Amadeus SDK often wraps errors in a response object
-    const errorMessage = error.response?.description?.detail || error.message || 'An unknown error occurred.';
+    const errorMessage = error.response?.description?.detail || error.message || JSON.stringify(error);
     return {
       error: errorMessage,
     };
