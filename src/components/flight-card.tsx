@@ -1,3 +1,4 @@
+
 import { ArrowRight, Clock, Plane } from 'lucide-react';
 import { Card, CardContent } from './ui/card';
 
@@ -16,7 +17,18 @@ interface FlightCardProps {
 }
 
 export default function FlightCard({ flight }: FlightCardProps) {
-  const formatTime = (dateTime: string) => new Date(dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const formatTime = (dateTime: string) => {
+    // Check if the string is a full ISO date-time string
+    if (dateTime.includes('T') && dateTime.includes('-')) {
+        const date = new Date(dateTime);
+        if (!isNaN(date.getTime())) {
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+    }
+    // Otherwise, assume it's just a time string (e.g., "10:00") and return it as is.
+    return dateTime;
+  };
+
   const formatDuration = (duration: string) => {
     return duration.replace('PT', '').replace('H', 'h ').replace('M', 'm');
   };

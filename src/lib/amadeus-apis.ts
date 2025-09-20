@@ -1,3 +1,4 @@
+
 import { Plane, Hotel, MapPin, Search, Route, Percent, Calendar, Briefcase, Star, Map, UserCheck, Shield, BookOpen, Clock, Activity, Car, Users, Ban, Wand2, Building } from 'lucide-react';
 import type { ComponentType } from 'react';
 
@@ -136,11 +137,13 @@ export const AMADEUS_APIS: AmadeusApi[] = [
     ],
     mockResponse: { data: [{ id: '1', departure: '10:00', arrival: '13:00', carrier: 'BA' }] },
     uiRequirements: `
-      Map the flight availability data to a list of flights. Each flight should contain:
+      Map the flight availability data to a list of flights. The API returns a simple list with times, not full date-times.
+      The 'departureDate' from the original user request is available in the context.
+      Each flight should contain:
       - id: The availability ID.
       - airline: The carrier code.
-      - departure: An object with iataCode (from input) and time (from 'at' property).
-      - arrival: An object with iataCode (from input) and time (from 'at' property).
+      - departure: An object with iataCode (from originLocationCode) and time. The time should be a full date-time string constructed by combining the departureDate from the request with the time from the API response (e.g., '2024-10-28T10:00:00').
+      - arrival: An object with iataCode (from destinationLocationCode) and time. The time should be a full date-time string constructed by combining the departureDate with the time from the API response.
       - duration: The duration string.
       - price: 0 (as price is not available).
       - currency: "USD" (as currency is not available).
