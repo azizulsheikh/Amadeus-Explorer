@@ -41,7 +41,13 @@ export const AMADEUS_APIS: AmadeusApi[] = [
         { name: 'airlineCode', label: 'Airline IATA Code', type: 'text', required: true, placeholder: 'e.g., BA', defaultValue: 'BA' },
     ],
     mockResponse: { data: [{ departure: { iataCode: 'LHR' }, arrival: { iataCode: 'JFK' } }, { departure: { iataCode: 'JFK' }, arrival: { iataCode: 'LHR' } }] },
-    uiRequirements: 'Display the routes as a list of departure and arrival airport pairs.',
+    uiRequirements: `
+      Map the route data to a list of routes. Each route should contain:
+      - id: A unique ID generated from the index.
+      - departure: The departure IATA code.
+      - arrival: The arrival IATA code.
+      Return the data as a JSON object with a "routes" key containing an array of these route objects.
+    `,
   },
   {
     id: 'airport-city-search',

@@ -6,6 +6,7 @@ import { Eye, ServerCrash } from 'lucide-react';
 import FlightCard, { type MappedFlight } from './flight-card';
 import HotelCard, { type MappedHotel } from './hotel-card';
 import PoiCard, { type MappedPoi } from './poi-card';
+import RouteCard, { type MappedRoute } from './route-card';
 
 interface UiPreviewProps {
   data: string | undefined;
@@ -17,10 +18,10 @@ export default function UiPreview({ data, apiId, isLoading }: UiPreviewProps) {
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Skeleton className="h-80 w-full" />
-          <Skeleton className="h-80 w-full" />
-          <Skeleton className="h-80 w-full" />
+        <div className="space-y-4">
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-24 w-full" />
         </div>
       );
     }
@@ -63,6 +64,15 @@ export default function UiPreview({ data, apiId, isLoading }: UiPreviewProps) {
           return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {parsedData.pois?.map((poi: MappedPoi) => <PoiCard key={poi.id} poi={poi} />)}
+            </div>
+          );
+        case 'airline-routes':
+          if (!parsedData.routes || parsedData.routes.length === 0) {
+            return <p>No routes found for this airline.</p>;
+          }
+          return (
+            <div className="space-y-4">
+              {parsedData.routes?.map((route: MappedRoute) => <RouteCard key={route.id} route={route} />)}
             </div>
           );
         default:
