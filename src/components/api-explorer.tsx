@@ -47,15 +47,6 @@ export default function ApiExplorer() {
   const handleRequestSubmit = async (params: Record<string, any>) => {
     if (!selectedApi) return;
 
-    if (!useMockData && (process.env.NEXT_PUBLIC_AMADEUS_API_KEY === 'YOUR_API_KEY' || !process.env.NEXT_PUBLIC_AMADEUS_API_KEY)) {
-      toast({
-        variant: 'destructive',
-        title: 'API Credentials Not Set',
-        description: 'Please set your Amadeus API Key and Secret in the .env file to use live data.',
-      });
-      return;
-    }
-
     setIsLoading(true);
     setApiResult(null);
     const result = await executeApiAndMapData(selectedApi.id, params, useMockData);
@@ -128,8 +119,8 @@ export default function ApiExplorer() {
                         </Tooltip>
                         <Switch
                             id="mock-data-switch"
-                            checked={useMockData}
-                            onCheckedChange={setUseMockData}
+                            checked={!useMockData}
+                            onCheckedChange={(checked) => setUseMockData(!checked)}
                         />
                         <Tooltip>
                             <TooltipTrigger asChild>
@@ -140,10 +131,17 @@ export default function ApiExplorer() {
                     </div>
                 </div>
             </CardHeader>
-            {!useMockData && (
+            {useMockData && (
               <CardContent>
                 <div className="p-4 rounded-md bg-accent/10 border border-accent/20 text-accent-foreground/80 text-sm">
-                  Live data is enabled. Ensure your <code className="font-mono bg-accent/20 px-1 py-0.5 rounded-sm">.env</code> file is configured with your Amadeus API credentials.
+                  Mock data is enabled. The app will not make real API calls.
+                </div>
+              </CardContent>
+            )}
+            {!useMockData && (
+              <CardContent>
+                <div className="p-4 rounded-md bg-primary/10 border border-primary/20 text-primary-foreground/80 text-sm">
+                  Live data is enabled. Ensure your <code className="font-mono bg-primary/20 px-1 py-0.5 rounded-sm">.env</code> file is configured with your Amadeus API credentials.
                 </div>
               </CardContent>
             )}
