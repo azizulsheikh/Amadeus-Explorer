@@ -1,3 +1,4 @@
+
 "use server";
 
 import Amadeus from 'amadeus';
@@ -5,7 +6,7 @@ import { dataMappingWithLLM } from '@/ai/flows/data-mapping-with-llm';
 import { AMADEUS_APIS } from '@/lib/amadeus-apis';
 
 const getAmadeusClient = (apiKey?: string, apiSecret?: string) => {
-  if (!apiKey || !apiSecret) {
+  if (!apiKey || !apiSecret || apiKey === 'YOUR_API_KEY' || apiSecret === 'YOUR_API_SECRET') {
     return null;
   }
   return new Amadeus({
@@ -30,13 +31,13 @@ export async function executeApiAndMapData(
     
     const apiKey = process.env.AMADEUS_API_KEY;
     const apiSecret = process.env.AMADEUS_API_SECRET;
+    const amadeus = getAmadeusClient(apiKey, apiSecret);
 
-    if (useMock || !apiKey || !apiSecret || apiKey === 'YOUR_API_KEY' || apiSecret === 'YOUR_API_SECRET') {
+    if (useMock) {
       rawApiResponse = api.mockResponse;
     } else {
-      const amadeus = getAmadeusClient(apiKey, apiSecret);
       if (!amadeus) {
-        throw new Error('Amadeus client could not be initialized. Check your API key and secret in the .env file.');
+        return { error: 'Amadeus API credentials are not configured. Please add AMADEUS_API_KEY and AMADEUS_API_SECRET to your .env file.' };
       }
       
       let apiPromise;
@@ -49,8 +50,7 @@ export async function executeApiAndMapData(
         case 'airline-routes':
             // The SDK might not have a direct mapping for this. Assuming a generic call pattern.
             // This is a placeholder, actual implementation depends on the exact SDK method.
-            console.warn(`No direct SDK mapping for ${api.id}, using mock data.`);
-            rawApiResponse = api.mockResponse;
+            apiPromise = amadeus.airline.destinations.get({ airlineCode: params.airlineCode });
             break;
         case 'airport-city-search':
             apiPromise = amadeus.referenceData.locations.get({
@@ -65,9 +65,7 @@ export async function executeApiAndMapData(
             apiPromise = amadeus.airport.predictions.onTime.get({ airportCode: params.airportCode, date: params.date });
             break;
         case 'airport-routes':
-            // This is a placeholder, actual implementation depends on the exact SDK method.
-            console.warn(`No direct SDK mapping for ${api.id}, using mock data.`);
-            rawApiResponse = api.mockResponse;
+            apiPromise = amadeus.airport.directDestinations.get({ departureAirportCode: params.airportCode });
             break;
         case 'branded-fares-upsell':
             // Requires a flight offers search response body, which is too complex for this form.
@@ -106,11 +104,7 @@ export async function executeApiAndMapData(
             rawApiResponse = api.mockResponse;
             break;
         case 'flight-delay-prediction':
-            apiPromise = amadeus.travel.predictions.flightDelay.get({
-                ...params,
-                originLocationCode: params.origin, // Remapping for SDK if needed
-                destinationLocationCode: params.destination,
-            });
+            apiPromise = amadeus.travel.predictions.flightDelay.get(params);
             break;
         case 'flight-inspiration-search':
             apiPromise = amadeus.shopping.flightDestinations.get(params);
@@ -133,9 +127,11 @@ export async function executeApiAndMapData(
             apiPromise = amadeus.booking.flightOrder(params.orderId).get();
             break;
         case 'flight-price-analysis':
-            // This is a placeholder, actual implementation depends on the exact SDK method.
-            console.warn(`No direct SDK mapping for ${api.id}, using mock data.`);
-            rawApiResponse = api.mockResponse;
+            apiPromise = amadeus.analytics.itineraryPriceMetrics.get({
+                ...params,
+                originIataCode: params.origin,
+                destinationIataCode: params.destination,
+            });
             break;
         case 'hotel-booking':
             // Requires a full hotel offer and guest info, which is complex.
@@ -147,8 +143,7 @@ export async function executeApiAndMapData(
             break;
         case 'hotel-name-autocomplete':
              // The SDK might not have a direct mapping for this specific autocomplete.
-            console.warn(`No direct SDK mapping for ${api.id}, using mock data.`);
-            rawApiResponse = api.mockResponse;
+            apiPromise = amadeus.referenceData.locations.hotels.byKeyword.get({ keyword: params.keyword });
             break;
         case 'hotel-ratings':
             apiPromise = amadeus.eReputation.hotelSentiments.get({ hotelIds: params.hotelIds });
