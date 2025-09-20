@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -140,8 +141,8 @@ export default function ApiExplorer() {
             )}
             {!useMockData && (
               <CardContent>
-                <div className="p-4 rounded-md bg-primary/10 border border-primary/20 text-primary-foreground/80 text-sm">
-                  Live data is enabled. Ensure your <code className="font-mono bg-primary/20 px-1 py-0.5 rounded-sm">.env</code> file is configured with your Amadeus API credentials.
+                <div className="p-4 rounded-md bg-primary border border-primary-foreground/20 text-primary-foreground font-semibold text-sm">
+                  Live data is enabled. Ensure your <code className="font-mono bg-black/20 px-1 py-0.5 rounded-sm">.env</code> file is configured with your Amadeus API credentials.
                 </div>
               </CardContent>
             )}
