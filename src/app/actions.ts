@@ -35,8 +35,8 @@ export async function executeApiAndMapData(
       const apiKey = process.env.AMADEUS_API_KEY;
       const apiSecret = process.env.AMADEUS_API_SECRET;
       
-      if (!apiKey || !apiSecret) {
-        return { error: 'Amadeus API credentials are not configured. Please add AMADEUS_API_KEY and AMADEUS_API_SECRET to your .env file.' };
+      if (!apiKey || !apiSecret || apiKey === 'YOUR_API_KEY' || apiSecret === 'YOUR_API_SECRET') {
+        return { error: 'Amadeus API credentials are not configured. Please add AMADEUS_API_KEY and AMADEUS_API_SECRET to your .env file and ensure they are not placeholder values.' };
       }
 
       const amadeus = getAmadeusClient(apiKey, apiSecret);
