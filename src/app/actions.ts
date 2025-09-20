@@ -41,7 +41,6 @@ export async function executeApiAndMapData(
 
       const amadeus = getAmadeusClient(apiKey, apiSecret);
       if (!amadeus) {
-        // This case should ideally not be hit if the above check is done, but as a safeguard.
         return { error: 'Amadeus API client could not be initialized. Check your credentials.' };
       }
       
@@ -154,8 +153,19 @@ export async function executeApiAndMapData(
             apiPromise = amadeus.eReputation.hotelSentiments.get({ hotelIds: params.hotelIds });
             break;
         case 'hotel-search':
-          apiPromise = amadeus.shopping.hotelOffersSearch.get(params);
-          break;
+            const hotelsListResponse = await amadeus.referenceData.locations.hotels.byCity.get({ cityCode: params.cityCode });
+            const hotelIds = hotelsListResponse.data.map((hotel: any) => hotel.hotelId).slice(0, 5); // Use first 5 hotels
+            
+            if (hotelIds.length === 0) {
+              rawApiResponse = { data: [] }; // No hotels found
+              break;
+            }
+
+            apiPromise = amadeus.shopping.hotelOffersByHotel.get({
+              ...params,
+              hotelIds: hotelIds.join(','),
+            });
+            break;
         case 'location-score':
             apiPromise = amadeus.location.analytics.categoryRatedAreas.get(params);
             break;
@@ -223,7 +233,7 @@ export async function executeApiAndMapData(
   } catch (error: any) {
     console.error('Error executing API and mapping data:', error);
     // Amadeus SDK often wraps errors in a response object
-    const errorMessage = error.response?.description?.detail || error.message || JSON.stringify(error);
+    const errorMessage = error.response?.result?.errors?.[0]?.detail || error.response?.description?.detail || error.message || JSON.stringify(error);
     return {
       error: errorMessage,
     };
