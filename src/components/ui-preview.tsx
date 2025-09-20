@@ -8,6 +8,7 @@ import FlightCard, { type MappedFlight } from './flight-card';
 import HotelCard, { type MappedHotel } from './hotel-card';
 import PoiCard, { type MappedPoi } from './poi-card';
 import RouteCard, { type MappedRoute } from './route-card';
+import LocationCard, { type MappedLocation } from './location-card';
 
 interface UiPreviewProps {
   data: string | undefined;
@@ -74,6 +75,15 @@ export default function UiPreview({ data, apiId, isLoading }: UiPreviewProps) {
           return (
             <div className="space-y-4">
               {parsedData.routes?.map((route: MappedRoute) => <RouteCard key={route.id} route={route} />)}
+            </div>
+          );
+        case 'airport-city-search':
+          if (!parsedData.locations || parsedData.locations.length === 0) {
+            return <p>No locations found for this search.</p>;
+          }
+          return (
+            <div className="space-y-4">
+              {parsedData.locations?.map((location: MappedLocation) => <LocationCard key={location.id} location={location} />)}
             </div>
           );
         default:

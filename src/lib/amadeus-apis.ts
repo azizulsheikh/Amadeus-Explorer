@@ -1,4 +1,4 @@
-import { Plane, Hotel, MapPin, Search, Route, Percent, Calendar, Briefcase, Star, Map, UserCheck, Shield, BookOpen, Clock, Activity, Car, Users, Ban, Wand2 } from 'lucide-react';
+import { Plane, Hotel, MapPin, Search, Route, Percent, Calendar, Briefcase, Star, Map, UserCheck, Shield, BookOpen, Clock, Activity, Car, Users, Ban, Wand2, Building } from 'lucide-react';
 import type { ComponentType } from 'react';
 
 export type ApiParam = {
@@ -53,12 +53,19 @@ export const AMADEUS_APIS: AmadeusApi[] = [
     id: 'airport-city-search',
     name: 'Airport & City Search',
     description: 'Find airports and cities matching a keyword.',
-    icon: Search,
+    icon: Building,
     params: [
         { name: 'keyword', label: 'Keyword', type: 'text', required: true, placeholder: 'e.g., London', defaultValue: 'London' },
     ],
     mockResponse: { data: [{ subType: 'CITY', name: 'LONDON', iataCode: 'LON' }, { subType: 'AIRPORT', name: 'HEATHROW', iataCode: 'LHR' }] },
-    uiRequirements: 'Display a list of locations with their type (city/airport) and IATA code.',
+    uiRequirements: `
+      Map the location data to a list of locations. Each location should contain:
+      - id: A unique ID generated from the index.
+      - name: The location name.
+      - subType: The subtype (e.g., 'CITY' or 'AIRPORT').
+      - iataCode: The IATA code for the location.
+      Return the data as a JSON object with a "locations" key containing an array of these location objects.
+    `,
   },
   {
     id: 'airport-nearest-relevant',
