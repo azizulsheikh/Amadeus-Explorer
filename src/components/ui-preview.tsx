@@ -17,10 +17,10 @@ export default function UiPreview({ data, apiId, isLoading }: UiPreviewProps) {
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="grid grid-cols-1 gap-4">
-          <Skeleton className="h-32 w-full" />
-          <Skeleton className="h-32 w-full" />
-          <Skeleton className="h-32 w-full" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Skeleton className="h-80 w-full" />
+          <Skeleton className="h-80 w-full" />
+          <Skeleton className="h-80 w-full" />
         </div>
       );
     }
@@ -39,18 +39,27 @@ export default function UiPreview({ data, apiId, isLoading }: UiPreviewProps) {
 
       switch (apiId) {
         case 'flight-offers-search':
+          if (!parsedData.flights || parsedData.flights.length === 0) {
+            return <p>No flights found for this search.</p>;
+          }
           return (
             <div className="space-y-4">
               {parsedData.flights?.map((flight: MappedFlight) => <FlightCard key={flight.id} flight={flight} />)}
             </div>
           );
         case 'hotel-search':
+           if (!parsedData.hotels || parsedData.hotels.length === 0) {
+            return <p>No hotels found for this search.</p>;
+          }
           return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {parsedData.hotels?.map((hotel: MappedHotel) => <HotelCard key={hotel.id} hotel={hotel} />)}
             </div>
           );
         case 'points-of-interest':
+           if (!parsedData.pois || parsedData.pois.length === 0) {
+            return <p>No points of interest found.</p>;
+          }
           return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {parsedData.pois?.map((poi: MappedPoi) => <PoiCard key={poi.id} poi={poi} />)}
